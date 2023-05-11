@@ -10,48 +10,55 @@ export const roomContext = React.createContext();
 function App() {
   const localRooms = JSON.parse(localStorage.getItem("rooms"));
   const [rooms, setRooms] = useState(localRooms || []);
-  const [productArr, setproductArr] = useState([]);
+
   const [currentRoom, setCurrentRoom] = useState(0);
-  const updateProductArr = () => {
+  const addProduct = (product) => {
     const newRooms = [...rooms];
-    newRooms[currentRoom].products = productArr;
+    if (newRooms[currentRoom].products.length < 5) {
+      newRooms[currentRoom].products.push({ name: product, on: false });
+      setRooms(newRooms);
+    }
+  };
+  const toggleProduct = (index) => {
+    const newRooms = [...rooms];
+    newRooms[currentRoom].products[index].on =
+      !newRooms[currentRoom].products[index].on;
     setRooms(newRooms);
   };
   useEffect(() => {
     localStorage.setItem("rooms", JSON.stringify(rooms));
   }, [rooms]);
-  
+
   return (
     <>
-    <h1 className="title">Smart House</h1>
-    <div className="base">
-      <roomContext.Provider
-        value={{
-          rooms: rooms,
-          setRooms: setRooms,
-          updateProductArr: updateProductArr,
-          currentRoom: currentRoom,
-          setCurrentRoom: setCurrentRoom,
-          productArr: productArr,
-          setproductArr: setproductArr,
-        }}
-      >
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Home rooms={rooms} />} />
-            <Route
-              path="/addroom"
-              element={<AddRoom setRooms={setRooms} rooms={rooms} />}
-            />
-            <Route
-              path={`/room${rooms.length < 1 ? "" : rooms[currentRoom].name}`}
-              element={<RoomView rooms={rooms} setRooms={setRooms} />}
-            />
-            <Route path="*" element={<NoMatch />} />
-          </Routes>
-        </BrowserRouter>
-      </roomContext.Provider>
-    </div>
+      <h1 className="title">Smart House</h1>
+      <div className="base">
+        <roomContext.Provider
+          value={{
+            rooms,
+            setRooms,
+            addProduct,
+            currentRoom,
+            setCurrentRoom,
+            toggleProduct,
+          }}
+        >
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<Home rooms={rooms} />} />
+              <Route
+                path="/addroom"
+                element={<AddRoom setRooms={setRooms} rooms={rooms} />}
+              />
+              <Route
+                path={`/room${rooms.length < 1 ? "" : rooms[currentRoom].name}`}
+                element={<RoomView rooms={rooms} setRooms={setRooms} />}
+              />
+              <Route path="*" element={<NoMatch />} />
+            </Routes>
+          </BrowserRouter>
+        </roomContext.Provider>
+      </div>
     </>
   );
 }

@@ -44,6 +44,8 @@ export default function AddRoom(props) {
         onChange={handleChange}
       />
       <TextField
+        inputProps={{ maxLength: 5 }}
+        maxLength={5}
         style={{
           marginTop: "10px",
         }}

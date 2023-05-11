@@ -9,70 +9,49 @@ import { Button } from "@mui/material";
 export default function RoomView(props) {
   const context = useContext(roomContext);
   const [showAdd, setShowAdd] = useState(false);
-  const addProduct = (product) => {
-    if (context.productArr.length < 5) {
-      context.setproductArr([
-        ...context.productArr,
-        { name: product, on: false },
-      ]);
-    }
-  };
-
-  const toggleProduct = (index) => {
-    const newProductArr = [...context.rooms[context.currentRoom].products];
-    newProductArr[index].on = !newProductArr[index].on;
-    context.setproductArr(newProductArr);
-    context.rooms[context.currentRoom].products = newProductArr;
-  };
-
   const showAddSection = () => {
-    if (showAdd) {
-      return <AddProduct addProduct={addProduct} />;
+    if (showAdd && context.rooms[context.currentRoom].products.length < 5) {
+      return <AddProduct />;
     }
   };
+  const ifShow = () => {};
 
   return (
     <div className="contained">
       <Link to="/">
-        <Button
-          variant="outlined"
-          onClick={() =>
-            context.setproductArr(context.rooms[context.currentRoom].products)
-          }
-        >
-          Back
-        </Button>
+        <Button variant="outlined">Back</Button>
       </Link>
       <h2
         style={{
           textAlign: "center",
         }}
       >
-        {context.rooms[context.currentRoom].name}{" "}
-        {context.rooms[context.currentRoom].type}
+        <div className="titleDiv">
+          <p style={{ margin: "5px" }}>
+            Room Name: {context.rooms[context.currentRoom].name}
+          </p>
+          <p style={{ margin: "5px" }}>
+            Room Type: {context.rooms[context.currentRoom].type}
+          </p>
+        </div>
       </h2>
       <div className="products">
         <div className="flex">
           {context.rooms[context.currentRoom].products.map((val, idx) => {
             return (
-              <Product
-                addProduct={addProduct}
-                toggleProduct={toggleProduct}
-                val={val}
-                idx={idx}
-                currentRoom={props.currentRoom}
-              />
+              <Product val={val} idx={idx} currentRoom={props.currentRoom} />
             );
           })}
         </div>
 
         <Button
+          disabled={context.rooms[context.currentRoom].products.length >= 5}
           variant="contained"
           style={{
             marginTop: "5px",
             marginButtom: "5px",
           }}
-          onClick={() => (showAdd ? setShowAdd(false) : setShowAdd(true))}
+          onClick={() => setShowAdd(!showAdd)}
         >
           {showAdd ? "Hide Form" : "Add Items"}
         </Button>
